@@ -1,0 +1,22 @@
+function plot_contour_extended(X, y, beta, l)
+    % Plot probability contour
+    % [X1,X2] = meshgrid(X(:,1), X(:,2));
+    x1 = -3:0.5:3;
+    x2 = -3:0.5:3;
+    [X1,X2] = meshgrid(x1, x2);
+    
+    for i = 1:size(x1,2)
+        for j = 1:size(x2,2)
+            extended_row = getRBF(X, [x1(i) x2(j) 1], l);
+extended_row = [ones(size(extended_row,1), 1) extended_row];
+            Z(j,i) = 1./(1 + exp(-(beta'*extended_row')));
+        end
+    end
+   
+     size(Z)
+     size(X1)
+     size(X2)
+    %visualise(X,y);
+    hold on
+    contour(X1,X2,Z, 'ShowText','on');
+end

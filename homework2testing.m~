@@ -1,0 +1,80 @@
+function homework2testing()
+clear all;
+close all;
+clc;
+warning('off');
+load('classification.mat');
+
+%Divide targets into 2 sets using random indices
+testInd = randi(1000,200,1);
+trainInd = 1:1000;
+trainInd(testInd) = 0;
+trainInd = trainInd(trainInd!=0);
+
+testX = X(testInd,:);
+trainXOriginal = X(trainInd,:);
+testy = y(testInd,:);
+trainy = y(trainInd,:);
+
+testX = getRBF(trainXOriginal,testX,1);
+trainX = getRBF(trainXOriginal, trainXOriginal, 1);
+originalX = X;
+m = size(X, 1);
+testX = [ones(size(testX,1), 1) testX];
+
+rbf=1;
+
+
+%verification
+%theta = trainLC(trainX,trainy,iter);
+%h=sigmoid(testX*theta);
+%trueanswersfminc = sum((h>0.5)==testy)
+
+%with own class
+
+[theta, logLik] = trainLogClass(trainX, trainy, 2500, .1, 0);
+trainlogLik = logLik(2500)
+trainLik = exp(logLik(2500))
+
+
+% Add ones to the X data matrix
+%X = [ones(m, 1) X];
+contourProb(X, theta, y, trainXOriginal, rbf)
+
+%--------------PART2-------------
+printf('\n RBF 1 Lambda: 1\n');
+homeworkpart2(testInd,trainInd,X,y,1,2500,.1,0)
+
+
+
+
+
+
+%--------------PART2-------------
+printf('\n RBF 1 Lambda: 1\n');
+homeworkpart2(testInd,trainInd,X,y,1,2500,.1,0)
+
+printf('\n RBF .1 Lambda=0\n');
+homeworkpart2(testInd,trainInd,X,y,.1,2500,1.2,0)
+
+printf('\n RBF .01 Lambda=0\n');
+homeworkpart2(testInd,trainInd,X,y,0.01,3000,4,0)
+
+%--------------PART3-------------
+printf('\n--------------PART3-------------\n');
+printf('-------------PART3-------------\n');
+printf('\n RBF 1 Lambda: 1\n');
+homeworkpart2(testInd,trainInd,X,y,1,2500,.1,1)
+
+printf('\n RBF .1 Lambda: 1\n');
+homeworkpart2(testInd,trainInd,X,y,.1,2500,1.2,1)
+
+printf('\n RBF .01 Lambda: 1\n');
+homeworkpart2(testInd,trainInd,X,y,0.01,3000,4,1)
+end
+
+
+
+
+
+

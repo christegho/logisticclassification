@@ -1,0 +1,87 @@
+function [] = homeworkpart2(testInd,trainInd,testInd,trainInd,X,y,rbf,iter)
+printf('\n--------------rbf '+ rbf+' -------------\n');
+X=getRBF(X,rbf);
+m = size(X, 1);
+
+% Add ones to the X data matrix
+%X = [ones(m, 1) X];
+testX = X(testInd,:);
+trainX = X(trainInd,:);
+testy = y(testInd,:);
+trainy = y(trainInd,:);
+
+
+testX = X(testInd,:);
+trainX = X(trainInd,:);
+testy = y(testInd,:);
+trainy = y(trainInd,:);
+
+%verification
+theta1 = trainLC(trainX,trainy);
+testX = [ones(100, 1) testX];
+h=sigmoid(testX*theta1);
+ta2 = sum((h>0.5)==testy)
+
+%with own class
+[theta, logLik] = trainLogClass(trainX, trainy, iter, 2);
+theta;
+trainlogLik = logLik(iter)
+
+figure
+plot(exp(logLik));
+
+testh=sigmoid(testX*theta);
+
+trueanswers = sum((testh>0.5)==testy)
+
+
+%confusion matrix
+printf('---confusion matrix - rates----\n');
+printf('\n');
+predictions = testh>0.5;
+indexTestPos = predictions(find(testy));
+indexTestNeg = predictions(find(~testy));
+lengthTestPos = length(find(testy));
+lengthTestNeg = length(find(~testy));
+tp = sum(indexTestPos)/lengthTestPos
+fp = sum(indexTestNeg)/lengthTestNeg
+fn = 1-tp
+tn = 1-fp 
+
+printf('---confusion matrix----\n');
+printf('\n');
+tp = sum(indexTestPos)
+fp = sum(indexTestNeg)
+fn = lengthTestPos-tp
+tn = lengthTestNeg-fp 
+
+
+printf('-----------------\n');
+
+%compute ROC curve
+threshold = 0:0.1:1;
+
+trueanswers = sum((testh>threshold)==testy);
+figure 
+plot(trueanswers,threshold);
+xlabel('threshold');
+ylabel('%rate of sum of true positives and true negatives');
+
+tp = zeros(size(threshold));
+fp = zeros(size(threshold));
+
+predictions = testh>threshold;
+
+for k = 1:length(threshold)
+  indexTestPos = predictions(:,k)(find(testy));
+  indexTestNeg = predictions(:,k)(find(~testy));
+  tp(k) = sum(indexTestPos)/length(find(testy));
+  fp(k) = sum(indexTestNeg)/length(find(~testy));
+
+end
+figure
+plot(fp,tp);
+xlabel('false positive rate');
+ylabel('true positive rate');
+
+end
